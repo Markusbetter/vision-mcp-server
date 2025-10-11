@@ -1,4 +1,4 @@
-# Vision MCP Server | 视觉分析 MCP 服务器
+# Vision MCP Server | 图片分析 MCP
 
 [English](#english) | [中文](#中文)
 
@@ -6,7 +6,9 @@
 
 ## 中文
 
-一个用于视觉分析的 MCP (Model Context Protocol) 服务器，支持图片内容分析和描述。
+一个用于图片分析的 MCP (Model Context Protocol) 服务器，支持图片内容分析和描述。
+例如当你在客户端的模型只支持文字输入，这时你可以使用视觉模型mcp来弥补。
+这个项目采用了魔搭社区免费的视觉模型Qwen3-VL-30B-A3B-Instruct（你也可以在配置中，使用魔搭社区自行更换为自己想要的视觉模型）。
 
 ## 功能特点
 
@@ -19,7 +21,7 @@
 
 ### 方式一：使用 npx（推荐）
 
-无需预先安装，npx 会自动下载并运行最新版本：
+无需预先安装，在客户端填写以下内容npx 会自动下载并运行最新版本：
 
 ```json
 {
