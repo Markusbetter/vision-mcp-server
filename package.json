@@ -4,6 +4,11 @@
   "description": "MCP server for providing vision capabilities to text models using ModelScope models",
   "main": "dist/index.js",
   "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
