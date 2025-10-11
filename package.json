@@ -1,0 +1,41 @@
+{
+  "name": "vision-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for providing vision capabilities to text models using ModelScope models",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "vision",
+    "modelscope",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Markusbetter/vision-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Markusbetter/vision-mcp-server/issues"
+  },
+  "homepage": "https://github.com/Markusbetter/vision-mcp-server#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.4.0",
+    "openai": "^4.28.4",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.17",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  },
+  "bin": {
+    "vision-mcp-server": "dist/index.js"
+  }
+}
