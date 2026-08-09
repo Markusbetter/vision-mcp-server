@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- 智谱配置示例默认仅使用免费的 `glm-4v-flash`，避免复制配置后意外产生费用
+- 魔搭默认 fallback 模型更新为 `Qwen/Qwen3.5-397B-A17B` 和 `Qwen/Qwen3.5-35B-A3B`
+
 ## 1.1.0
 
 - 按 MCP TypeScript SDK 官方推荐迁移到 `McpServer.registerTool`

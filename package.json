@@ -1,6 +1,6 @@
 {
   "name": "vision-mcp-server",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Reliable vision MCP server with ordered fallback across ModelScope, Zhipu, and OpenAI-compatible models",
   "main": "dist/index.js",
   "type": "module",
