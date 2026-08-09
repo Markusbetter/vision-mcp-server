@@ -7,6 +7,7 @@ dist/
 # Environment variables
 .env
 .env.local
+.env.*
 
 # Logs
 npm-debug.log*
@@ -39,9 +40,6 @@ jspm_packages/
 
 # Yarn Integrity file
 .yarn-integrity
-
-# dotenv environment variables file
-.env
 
 # IDE
 .vscode/

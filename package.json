@@ -1,23 +1,35 @@
 {
   "name": "vision-mcp-server",
-  "version": "1.0.1",
-  "description": "MCP server for providing vision capabilities to text models using ModelScope models",
+  "version": "1.1.0",
+  "description": "Reliable vision MCP server with ordered fallback across ModelScope, Zhipu, and OpenAI-compatible models",
   "main": "dist/index.js",
   "type": "module",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "files": [
     "dist",
+    "!dist/index-new.*",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:live": "npm run build && node scripts/live-smoke-test.mjs",
+    "test:live:env": "npm run build && node --env-file=.env.local scripts/live-smoke-test.mjs"
   },
   "keywords": [
     "mcp",
     "vision",
     "modelscope",
+    "zhipu",
+    "openai-compatible",
+    "fallback",
     "ai"
   ],
   "author": "",
@@ -31,16 +43,21 @@
   },
   "homepage": "https://github.com/Markusbetter/vision-mcp-server#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^0.4.0",
-    "openai": "^4.28.4",
-    "zod": "^3.22.4"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "openai": "^4.104.0",
+    "sharp": "^0.35.3",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/node": "^20.11.17",
     "tsx": "^4.7.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   },
   "bin": {
     "vision-mcp-server": "dist/index.js"
+  },
+  "overrides": {
+    "form-data": "^4.0.6"
   }
 }

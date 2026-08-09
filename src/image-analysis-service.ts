@@ -1,111 +1,74 @@
-import { z } from 'zod';
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { ListToolsRequestSchema, CallToolRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import { z } from 'zod/v3';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import type { AppConfig } from './config.js';
 import { FileService } from './file-service.js';
 import { ChatService } from './chat-service.js';
+import { VisionError, errorMessage } from './errors.js';
 
-// 定义参数验证模式
-const AnalyzeImageParamsSchema = z.object({
-  image: z.string().describe("图片URL或本地文件路径"),
-  prompt: z.string().optional().default("请描述这张图片的内容").describe("对图片的问题或分析要求"),
-});
+const AnalyzeImageParamsShape = {
+  image: z.string().min(1).describe('图片 URL、本地文件路径或 data URL'),
+  prompt: z.string().optional().default('请描述这张图片的内容').describe('对图片的问题或分析要求'),
+};
+const AnalyzeImageParamsSchema = z.object(AnalyzeImageParamsShape);
 
 export type AnalyzeImageParams = z.infer<typeof AnalyzeImageParamsSchema>;
 
-/**
- * 图片分析服务类
- */
 export class ImageAnalysisService {
-  private chatService: ChatService;
+  private readonly chatService: ChatService;
 
-  constructor(apiKey: string, model: string) {
-    this.chatService = new ChatService(apiKey, model);
+  constructor(private readonly config: AppConfig) {
+    this.chatService = new ChatService(config.routes, {
+      fallbackCooldownMs: config.fallbackCooldownMs,
+      debug: config.debug,
+    });
   }
 
-  /**
-   * 分析图片
-   */
   async analyzeImage(params: AnalyzeImageParams): Promise<string> {
-    // 验证参数
     const validatedParams = AnalyzeImageParamsSchema.parse(params);
-    
-    // 处理图片输入
-    const imageUrl = await FileService.processImageInput(validatedParams.image);
-    
-    // 调用聊天服务进行分析
-    return await this.chatService.visionCompletions(imageUrl, validatedParams.prompt);
+    const maxImageEdge = Math.min(...this.config.routes.map((route) => route.maxImageEdge));
+    const image = await FileService.processImageInput(validatedParams.image, {
+      ...this.config.image,
+      maxImageEdge,
+    });
+
+    if (this.config.debug) {
+      process.stderr.write(`[vision-mcp] image ${image.originalWidth}x${image.originalHeight} -> ${image.width}x${image.height}, source=${image.sourceType}\n`);
+    }
+    return this.chatService.visionCompletions(image.dataUrl, validatedParams.prompt);
   }
 }
 
-/**
- * 注册图片分析工具到MCP服务器
- */
-export function registerImageAnalysisTool(server: Server, apiKey: string, model?: string) {
-  const imageAnalysisService = new ImageAnalysisService(apiKey, model || "Qwen/Qwen3-VL-30B-A3B-Instruct");
+function displayError(error: unknown): string {
+  if (error instanceof VisionError) return `[${error.code}] ${error.message}`;
+  if (error instanceof z.ZodError) return `参数无效：${error.issues.map((issue) => issue.message).join('；')}`;
+  return errorMessage(error);
+}
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: [
-        {
-          name: "analyze_image",
-          description: "分析图片内容并提供详细描述",
-          inputSchema: {
-            type: "object",
-            properties: {
-              image: {
-                type: "string",
-                description: "图片URL或本地文件路径",
-              },
-              prompt: {
-                type: "string",
-                description: "对图片的问题或分析要求",
-                default: "请描述这张图片的内容",
-              },
-            },
-            required: ["image"],
-          },
-        },
-      ],
-    };
-  });
+export function registerImageAnalysisTool(server: McpServer, config: AppConfig): void {
+  const imageAnalysisService = new ImageAnalysisService(config);
 
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const { name, arguments: args } = request.params;
-
-    if (name === "analyze_image") {
+  server.registerTool(
+    'analyze_image',
+    {
+      title: '分析图片',
+      description: '使用可配置的视觉模型分析图片；遇到限流、超时或服务故障时可自动切换备用模型',
+      inputSchema: AnalyzeImageParamsShape,
+      annotations: {
+        readOnlyHint: true,
+        destructiveHint: false,
+        idempotentHint: true,
+        openWorldHint: true,
+      },
+    },
+    async (args: AnalyzeImageParams) => {
       try {
-        const result = await imageAnalysisService.analyzeImage(args as AnalyzeImageParams);
-        return {
-          content: [
-            {
-              type: "text",
-              text: result,
-            },
-          ],
-        };
+        const result = await imageAnalysisService.analyzeImage(args);
+        return { content: [{ type: 'text' as const, text: result }] };
       } catch (error) {
-        // 使用stderr输出错误信息，避免干扰MCP通信
-        process.stderr.write(`分析图片时出错: ${error instanceof Error ? error.message : String(error)}\n`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: `分析图片时出错: ${error instanceof Error ? error.message : String(error)}`,
-            },
-          ],
-          isError: true,
-        };
+        const message = displayError(error);
+        process.stderr.write(`分析图片时出错: ${message}\n`);
+        return { content: [{ type: 'text' as const, text: `分析图片时出错: ${message}` }], isError: true };
       }
-    } else {
-      return {
-        content: [
-          {
-            type: "text",
-            text: `未知工具: ${name}`,
-          },
-        ],
-        isError: true,
-      };
-    }
-  });
+    },
+  );
 }
