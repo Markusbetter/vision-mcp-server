@@ -50,7 +50,7 @@ v1.1 支持：
       "args": ["-y", "vision-mcp-server"],
       "env": {
         "MODELSCOPE_TOKEN": "your_modelscope_token",
-        "MODELSCOPE_MODELS": "Qwen/Qwen3-VL-30B-A3B-Instruct,Qwen/Qwen2.5-VL-72B-Instruct"
+        "MODELSCOPE_MODELS": "Qwen/Qwen3.5-397B-A17B,Qwen/Qwen3.5-35B-A3B"
       }
     }
   }
@@ -59,7 +59,7 @@ v1.1 支持：
 
 `MODELSCOPE_MODELS` 是使用英文逗号分隔的有序列表：
 
-1. 首先调用 `Qwen/Qwen3-VL-30B-A3B-Instruct`。
+1. 首先调用 `Qwen/Qwen3.5-397B-A17B`。
 2. 如果它返回限流、超时或服务端故障，则调用后面的模型。
 3. 所有模型共用同一个 `MODELSCOPE_TOKEN`。
 
@@ -70,7 +70,7 @@ v1.1 支持：
 ```json
 {
   "MODELSCOPE_TOKEN": "your_modelscope_token",
-  "MODELSCOPE_MODEL": "Qwen/Qwen3-VL-30B-A3B-Instruct"
+  "MODELSCOPE_MODEL": "Qwen/Qwen3.5-397B-A17B"
 }
 ```
 
@@ -152,7 +152,7 @@ v1.1 支持：
         "MODELSCOPE_TOKEN": "your_modelscope_token",
         "ZAI_API_KEY": "your_zhipu_api_key",
         "CUSTOM_OPENAI_API_KEY": "your_custom_api_key",
-        "VISION_ROUTES": "[{\"name\":\"modelscope\",\"baseUrl\":\"https://api-inference.modelscope.cn/v1\",\"apiKeyEnv\":\"MODELSCOPE_TOKEN\",\"models\":[\"Qwen/Qwen3-VL-30B-A3B-Instruct\",\"Qwen/Qwen2.5-VL-72B-Instruct\"],\"maxImageEdge\":2048},{\"name\":\"zhipu\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas/v4\",\"apiKeyEnv\":\"ZAI_API_KEY\",\"models\":[\"glm-4v-flash\"],\"maxImageEdge\":2048},{\"name\":\"custom-openai\",\"baseUrl\":\"https://provider.example/v1\",\"apiKeyEnv\":\"CUSTOM_OPENAI_API_KEY\",\"models\":[\"your-vision-model\"],\"maxImageEdge\":2048}]"
+        "VISION_ROUTES": "[{\"name\":\"modelscope\",\"baseUrl\":\"https://api-inference.modelscope.cn/v1\",\"apiKeyEnv\":\"MODELSCOPE_TOKEN\",\"models\":[\"Qwen/Qwen3.5-397B-A17B\",\"Qwen/Qwen3.5-35B-A3B\"],\"maxImageEdge\":2048},{\"name\":\"zhipu\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas/v4\",\"apiKeyEnv\":\"ZAI_API_KEY\",\"models\":[\"glm-4v-flash\"],\"maxImageEdge\":2048},{\"name\":\"custom-openai\",\"baseUrl\":\"https://provider.example/v1\",\"apiKeyEnv\":\"CUSTOM_OPENAI_API_KEY\",\"models\":[\"your-vision-model\"],\"maxImageEdge\":2048}]"
       }
     }
   }

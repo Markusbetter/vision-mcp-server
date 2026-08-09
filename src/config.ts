@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const DEFAULT_MODELSCOPE_MODEL = 'Qwen/Qwen3-VL-30B-A3B-Instruct';
+export const DEFAULT_MODELSCOPE_MODELS = [
+  'Qwen/Qwen3.5-397B-A17B',
+  'Qwen/Qwen3.5-35B-A3B',
+];
 
 const RouteSchema = z.object({
   name: z.string().min(1).optional(),
@@ -116,11 +119,14 @@ function presetRoutes(env: NodeJS.ProcessEnv): RawRoute[] {
   }
 
   const models = listEnv(env.MODELSCOPE_MODELS);
+  const legacyModel = env.MODELSCOPE_MODEL?.trim();
   return [{
     name: 'modelscope',
     baseUrl: 'https://api-inference.modelscope.cn/v1',
     apiKeyEnv: 'MODELSCOPE_TOKEN',
-    models: models.length > 0 ? models : [env.MODELSCOPE_MODEL ?? DEFAULT_MODELSCOPE_MODEL],
+    models: models.length > 0
+      ? models
+      : (legacyModel ? [legacyModel] : DEFAULT_MODELSCOPE_MODELS),
     maxImageEdge: 2048,
   }];
 }
