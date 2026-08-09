@@ -89,14 +89,14 @@ v1.1 支持：
       "env": {
         "VISION_PROVIDER": "zhipu",
         "ZAI_API_KEY": "your_zhipu_api_key",
-        "VISION_MODELS": "glm-5v-turbo,glm-4.6v,glm-4.6v-flash,glm-4v-flash"
+        "VISION_MODELS": "glm-4v-flash"
       }
     }
   }
 }
 ```
 
-可以混合配置付费和免费视觉模型，例如：
+默认示例仅使用免费的 `glm-4v-flash`。如需其他模型，请先确认智谱账户权限和计费规则，再手动加入 `VISION_MODELS`，例如：
 
 - `glm-5v-turbo`：付费视觉模型
 - `glm-4.6v`：付费视觉模型
@@ -107,7 +107,7 @@ v1.1 支持：
 
 实际可用模型、价格和权限以[智谱官方模型列表](https://docs.bigmodel.cn/cn/guide/start/model-overview)为准。
 
-注意：我们在 2026-08-09 的真实联调中，多次遇到 `glm-4.6v-flash` 返回 HTTP 429、业务码 `1305`（模型当前访问量过大），而 `glm-4v-flash` 可正常调用。这属于智谱免费共享服务的临时过载，不是本 MCP 的图片格式错误。建议配置多个模型，或将有稳定额度的付费视觉模型放在前面。
+注意：我们在 2026-08-09 的真实联调中，多次遇到 `glm-4.6v-flash` 返回 HTTP 429、业务码 `1305`（模型当前访问量过大），而 `glm-4v-flash` 可正常调用。这属于智谱免费共享服务的临时过载，不是本 MCP 的图片格式错误。如确需配置付费模型作为 fallback，请先确认计费规则和账户额度。
 
 ## 方式三：一个通用 OpenAI 兼容接口，配置多个模型
 
@@ -152,7 +152,7 @@ v1.1 支持：
         "MODELSCOPE_TOKEN": "your_modelscope_token",
         "ZAI_API_KEY": "your_zhipu_api_key",
         "CUSTOM_OPENAI_API_KEY": "your_custom_api_key",
-        "VISION_ROUTES": "[{\"name\":\"modelscope\",\"baseUrl\":\"https://api-inference.modelscope.cn/v1\",\"apiKeyEnv\":\"MODELSCOPE_TOKEN\",\"models\":[\"Qwen/Qwen3-VL-30B-A3B-Instruct\",\"Qwen/Qwen2.5-VL-72B-Instruct\"],\"maxImageEdge\":2048},{\"name\":\"zhipu\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas/v4\",\"apiKeyEnv\":\"ZAI_API_KEY\",\"models\":[\"glm-5v-turbo\",\"glm-4.6v\",\"glm-4.6v-flash\",\"glm-4v-flash\"],\"maxImageEdge\":2048},{\"name\":\"custom-openai\",\"baseUrl\":\"https://provider.example/v1\",\"apiKeyEnv\":\"CUSTOM_OPENAI_API_KEY\",\"models\":[\"your-vision-model\"],\"maxImageEdge\":2048}]"
+        "VISION_ROUTES": "[{\"name\":\"modelscope\",\"baseUrl\":\"https://api-inference.modelscope.cn/v1\",\"apiKeyEnv\":\"MODELSCOPE_TOKEN\",\"models\":[\"Qwen/Qwen3-VL-30B-A3B-Instruct\",\"Qwen/Qwen2.5-VL-72B-Instruct\"],\"maxImageEdge\":2048},{\"name\":\"zhipu\",\"baseUrl\":\"https://open.bigmodel.cn/api/paas/v4\",\"apiKeyEnv\":\"ZAI_API_KEY\",\"models\":[\"glm-4v-flash\"],\"maxImageEdge\":2048},{\"name\":\"custom-openai\",\"baseUrl\":\"https://provider.example/v1\",\"apiKeyEnv\":\"CUSTOM_OPENAI_API_KEY\",\"models\":[\"your-vision-model\"],\"maxImageEdge\":2048}]"
       }
     }
   }
